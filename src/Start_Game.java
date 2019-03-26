@@ -1,4 +1,17 @@
+import java.util.Scanner;
+
 public class Start_Game {
+	
+	static int pointPlayer = 0;
+	static int pointDealer = 0;
+	static int countAsP = 0;
+	static int countAsD = 0;
+	static Card tempDealerCard1 = null;
+	static Card tempDealerCard2 = null;
+	static Card tempPlayerCard1 = null;
+	static Card tempPlayerCard2 = null;
+	
+	static Scanner in = new Scanner(System.in);
 	
 	public static void main(String[] args) {
 		// like K, Q, 2, 3, etc.
@@ -15,56 +28,78 @@ public class Start_Game {
 				1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10
 		};
 		
-		boolean end = false;
-		
 		Deck deck = new Deck(ranks, suits, values);
 		
 		deck.shuffle();
 		System.out.println("Dealer's Cards:");
-		Card tempDealerCard1 = deck.deal();
+		tempDealerCard1 = deck.deal();
 		System.out.println(tempDealerCard1);
-		Card tempDealerCard2 = deck.deal();
+		tempDealerCard2 = deck.deal();
 		System.out.println("-----Hidden Card-----");
+		pointDealer = tempDealerCard1.pointValue() + tempDealerCard2.pointValue();
 		
 		System.out.println("Your Cards:");
-		Card tempPlayerCard1 = deck.deal();
+		tempPlayerCard1 = deck.deal();
 		System.out.println(tempPlayerCard1);
-		Card tempPlayerCard2 = deck.deal();
-		Card tempPlayerCard3 = new Card("2", "Spade", 0);
+		tempPlayerCard2 = deck.deal();
 		System.out.println(tempPlayerCard2);
-		
-		while (end == false) {
-			if (tempPlayerCard1.pointValue() + tempPlayerCard2.pointValue() == 21) {
+		pointPlayer = tempPlayerCard1.pointValue() + tempPlayerCard2.pointValue();
+		checkForWin(deck);
+	}
+	public static void checkForWin(Deck deck) {
+		if (pointPlayer == 21) {
+			System.out.println("Blackjack! You win!");
+		}
+		else if (tempPlayerCard1.rank() == "A") {
+			countAsP++;
+			if (pointPlayer + 10 == 21) {
 				System.out.println("Blackjack! You win!");
-				end = true;
 			}
-			else if (tempPlayerCard1.rank() == "A") {
-				if (11 + tempPlayerCard2.pointValue() == 21) {
+			else if (countAsP > 1) {
+				if (pointPlayer + 20 == 21) {
 					System.out.println("Blackjack! You win!");
-					end = true;
-				}
-			}
-			else if (tempPlayerCard2.rank() == "A") {
-				if (11 + tempPlayerCard1.pointValue() == 21) {
-					System.out.println("Blackjack! You win!");
-					end = true;
-				}
-			}
-			else {
-				if (tempPlayerCard1.pointValue() + tempPlayerCard2.pointValue() + tempPlayerCard3.pointValue() > 21) {
-					System.out.println("Bust! You lose!");
-					end = true;
-				}
-				else {
-					System.out.println("Hit!");
-					System.out.println("Your Cards:");
-					System.out.println(tempPlayerCard1);
-					System.out.println(tempPlayerCard2);
-					tempPlayerCard3 = deck.deal();
-					System.out.println(tempPlayerCard3);
 				}
 			}
 		}
-		
+		else if (tempPlayerCard2.rank() == "A") {
+			countAsP++;
+			if (pointPlayer + 10 == 21) {
+				System.out.println("Blackjack! You win!");
+			}
+			else if (countAsP > 1) {
+				if (pointPlayer + 20 == 21) {
+					System.out.println("Blackjack! You win!");
+				}
+			}
+		}
+		else {
+			if (pointPlayer > 21) {
+				System.out.println("Bust! You lose!");
+			}
+			else {
+				System.out.println("Hit or Stand?");
+				System.out.println("Enter 'H' or 'S' or 'Q' (to quit)");
+				String choice = in.nextLine();
+				while (!choice.equals("Q")) {
+					switch (choice) {
+					case "H":
+						tempPlayerCard1 = null;
+						tempPlayerCard2 = null;
+						tempDealerCard1 = null;
+						tempDealerCard2 = null;
+						break;
+					case "S":
+						tempPlayerCard1 = null;
+						tempPlayerCard2 = null;
+						tempDealerCard1 = null;
+						tempDealerCard2 = null;
+						break;
+					default:
+						System.out.println("Please enter valid command.");
+						break;
+					}
+				}
+			}
+		}
 	}
 }
